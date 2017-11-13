@@ -1,0 +1,76 @@
+//
+//  ViewController.swift
+//  GerenciadorTarefas
+//
+//  Created by Jun  Nakasone on 11/11/2017.
+//  Copyright © 2017 Jun  Nakasone. All rights reserved.
+//
+
+import UIKit
+
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate {
+
+    @IBOutlet weak var taskNameTextField: UITextField!
+    @IBOutlet weak var tableView: UITableView!
+    
+    var tasks = [String]()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        taskNameTextField.delegate = self
+        tableView.rowHeight = UITableViewAutomaticDimension
+        // Do any additional setup after loading the view, typically from a nib.
+    }
+
+    @IBAction func addTask() {
+        
+        if taskNameTextField.text == "" {
+            return
+        }
+        
+        tasks.append(taskNameTextField.text!)
+        taskNameTextField.text = ""
+        taskNameTextField.resignFirstResponder()
+        tableView.reloadData()
+        
+    }
+    
+    // UITableViewDataSource
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int{
+        return tasks.count
+    }
+    
+    private func tableView(_ tableView: UITableView!, cellForRowAt indexPath: IndexPath!) -> UITableViewCell! {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath as IndexPath) as UITableViewCell
+        configureCell(cell: cell, asIndexPath: indexPath as! NSIndexPath)
+        
+        return cell
+    }
+    
+    func configureCell(cell: UITableViewCell, asIndexPath indexPath: NSIndexPath) {
+        let task = tasks[indexPath.row]
+        cell.textLabel?.text = task
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        
+        if editingStyle == .delete{
+            tasks.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+            
+        }
+    }
+    
+    
+    // UITextFieldDelegate
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        addTask()
+        return true
+    }
+    
+    
+    
+}
+
